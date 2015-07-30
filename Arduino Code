@@ -1,39 +1,3 @@
-#define NOTE_B0  31
-#define NOTE_C1  33
-#define NOTE_CS1 35
-#define NOTE_D1  37
-#define NOTE_DS1 39
-#define NOTE_E1  41
-#define NOTE_F1  44
-#define NOTE_FS1 46
-#define NOTE_G1  49
-#define NOTE_GS1 52
-#define NOTE_A1  55
-#define NOTE_AS1 58
-#define NOTE_B1  62
-#define NOTE_C2  65
-#define NOTE_CS2 69
-#define NOTE_D2  73
-#define NOTE_DS2 78
-#define NOTE_E2  82
-#define NOTE_F2  87
-#define NOTE_FS2 93
-#define NOTE_G2  98
-#define NOTE_GS2 104
-#define NOTE_A2  110
-#define NOTE_AS2 117
-#define NOTE_B2  123
-#define NOTE_C3  131
-#define NOTE_CS3 139
-#define NOTE_D3  147
-#define NOTE_DS3 156
-#define NOTE_E3  165
-#define NOTE_F3  175
-#define NOTE_FS3 185
-#define NOTE_G3  196
-#define NOTE_GS3 208
-#define NOTE_A3  220
-#define NOTE_AS3 233
 #define NOTE_B3  247
 #define NOTE_C4  262
 #define NOTE_CS4 277
@@ -71,39 +35,122 @@
 #define NOTE_A6  1760
 #define NOTE_AS6 1865
 #define NOTE_B6  1976
-#define NOTE_C7  2093
-#define NOTE_CS7 2217
-#define NOTE_D7  2349
-#define NOTE_DS7 2489
-#define NOTE_E7  2637
-#define NOTE_F7  2794
-#define NOTE_FS7 2960
-#define NOTE_G7  3136
-#define NOTE_GS7 3322
-#define NOTE_A7  3520
-#define NOTE_AS7 3729
-#define NOTE_B7  3951
-#define NOTE_C8  4186
-#define NOTE_CS8 4435
-#define NOTE_D8  4699
-#define NOTE_DS8 4978
-int out1,out2;
+
+#include <SerialGraphicLCD.h>
+#include <SoftwareSerial.h>
+#define maxX 127
+#define maxY 63
+LCD LCD;
+int out1,out2,tout1=0,tout2=0,c=0;
+int i;
+int k;
+int e = 0;
+int melody2[] = {
+  NOTE_E5,};
+int noteDurations2[] = {
+  2};
+  
+int melody1[] = {
+  NOTE_F4, NOTE_A5,};
+int noteDurations1[] = {
+  16,8};
+  
 int melody[] = {
   NOTE_CS6, NOTE_CS6,NOTE_CS6, NOTE_CS6,};
-
 int noteDurations[] = {
   8,8,8,8,16 };
+  
 void setup() {
   Serial.begin(9600);
-  pinMode(10,INPUT);
-  pinMode(5,OUTPUT);
+  delay(1500);
+  LCD.setHome();
+  LCD.clearScreen();
+
+for (int thisNote = 0; thisNote < 2; thisNote++) {
+    int noteDuration = 1000/noteDurations1[thisNote];
+    tone(8, melody1[thisNote],noteDuration);
+    int pauseBetweenNotes = noteDuration * 1.30;
+    delay(pauseBetweenNotes);
+    noTone(8);
+  }  
+  
+delay(10);
+ LCD.setX(maxX/2-55);
+ LCD.setY(10);
+LCD.printStr("Bun venit la indoor");
+delay(200);
+ LCD.setX(maxX/2-30);
+ LCD.setY(20);
+ delay(10);
+ LCD.printStr("skydiving !");
+ delay(2000);
+ LCD.clearScreen();
+ delay(1500);
+ 
+ LCD.setX((maxX/2)-30);
+ LCD.setY(15);
+ LCD.printStr("Atentie la");
+ delay(100);
+ LCD.setX((maxX/2)-35);
+ LCD.setY(25);
+ LCD.printStr("explicatiile");
+ delay(100);
+ LCD.setX((maxX/2)-40);
+ LCD.setY(35);
+ LCD.printStr("care urmeaza !");
+ delay(3000);
+ LCD.clearScreen();
+ delay(100);
+ 
+ LCD.setX(maxX/2-53);
+ LCD.setY(0);
+ LCD.printStr("Pozitia corecta ");
+ delay(100);
+ LCD.setX(maxX/2-53);
+ LCD.setY(10);
+ LCD.printStr("pentru a plana :");
+ delay(100);
+ LCD.drawLine(15,maxY/2,40,maxY/2+10,1);
+ LCD.drawLine(15,maxY/2+30,40,maxY/2+20,1);
+ LCD.drawBox(40,maxY/2+10,80,maxY/2+20,1);
+ delay(100);
+ LCD.drawCircle(85,maxY/2+15,5,1);
+ LCD.drawLine(80,maxY/2+20,105,maxY/2+30,1);
+ LCD.drawLine(80,maxY/2+10,105,maxY/2,1);
+ delay(5000);
+ LCD.clearScreen();//Clearing Screen after first message
+ 
+ for (int thisNote = 0; thisNote < 1; thisNote++) {
+    int noteDuration = 1000/noteDurations2[thisNote];
+    tone(8, melody2[thisNote],noteDuration);
+    int pauseBetweenNotes = noteDuration * 1.30;
+    delay(pauseBetweenNotes);
+    noTone(8);
+  } 
+  delay(500);
   digitalWrite(5,HIGH);
+  
+  pinMode(6,INPUT);
+  pinMode(7,INPUT);
+  pinMode(5,OUTPUT);
 }
 
 void loop() {
 out1=digitalRead(2);
-out2=digitalRead(3);
-int k=digitalRead(10);
+out2=digitalRead(4);
+k=digitalRead(6);
+if(tout1 == out1 && tout2 == out2 && out1!=out2){
+c++;
+}
+else{
+c=0;
+}
+if(k==1 || c>=3 || e>=4){
+  digitalWrite(5,LOW);
+}
+else{
+  digitalWrite(5,HIGH);
+}
   Serial.print("Photo 1: ");
   Serial.print(out1, DEC); 
   Serial.print("   ");
@@ -112,7 +159,87 @@ int k=digitalRead(10);
 
 Serial.print("Distance: ");
 Serial.println(k);
-if(out1!=out2)
+
+if(out1 && !out2){
+  delay(10);
+LCD.setX(maxX/2-53);
+LCD.setY(0);
+  LCD.printStr("Inclina-ti-va spre");
+  LCD.drawLine(15,maxY/2,40,maxY/2+10,1);
+  LCD.drawLine(15,maxY/2+30,40,maxY/2+20,1);
+  delay(40);
+  LCD.drawBox(40,maxY/2+10,80,maxY/2+20,1);
+  LCD.drawLine(105,maxY/2+30,110,maxY/2+30,1);
+  delay(210);
+  LCD.setX(maxX/2-25);
+  LCD.setY(10);
+  LCD.printStr("dreapta !");
+  delay(40);
+  LCD.drawLine(80,maxY/2+10,55,maxY/2,1);
+  LCD.drawLine(80,maxY/2+20,105,maxY/2+30,1);
+  delay(200);
+}
+else
+if(!out1 && out2){
+  delay(10);
+LCD.setX(maxX/2-53);
+LCD.setY(0);
+  LCD.printStr("Inclina-ti-va spre");
+  LCD.drawLine(15,maxY/2,40,maxY/2+10,1);
+  LCD.drawLine(15,maxY/2+30,40,maxY/2+20,1);
+  delay(25);
+  LCD.drawBox(40,maxY/2+10,80,maxY/2+20,1);
+  LCD.drawLine(105,maxY/2,110,maxY/2,1);
+  delay(240);
+  LCD.setX(maxX/2-25);
+  LCD.setY(10);
+  LCD.printStr("stanga !");
+  delay(25);
+  LCD.drawLine(80,maxY/2+10,105,maxY/2,1);
+  LCD.drawLine(80,maxY/2+20,60,maxY/2+30,1);
+  delay(200);
+  
+}
+else
+if(out1==1 && out2 ==1){
+    delay(10);
+    LCD.setX(maxX/2-40);
+    LCD.setY(5);
+    LCD.printStr("Va indreptati");
+    delay(40);
+    LCD.setX(maxX/2-30);
+    LCD.setY(15);
+    LCD.printStr("inainte !");
+    delay(25);
+ LCD.drawLine(15,maxY/2,40,maxY/2+10,1);
+ LCD.drawLine(15,maxY/2+30,40,maxY/2+20,1);
+ delay(100);
+ LCD.drawBox(40,maxY/2+10,80,maxY/2+20,1);
+ LCD.drawLine(80,maxY/2+20,105,maxY/2+30,1);
+ LCD.drawLine(80,maxY/2+10,105,maxY/2,1);
+ delay(300);
+}
+else
+if(!out1 && !out2){
+    delay(10);
+    LCD.setX(maxX/2-40);
+    LCD.setY(5);
+    LCD.printStr("Va indreptati");
+    delay(40);
+    LCD.setX(maxX/2-30);
+    LCD.setY(15);
+    LCD.printStr("inapoi !");
+    delay(25);
+ LCD.drawLine(15,maxY/2,40,maxY/2+10,1);
+ LCD.drawLine(15,maxY/2+30,40,maxY/2+20,1);
+ delay(100);
+ LCD.drawBox(40,maxY/2+10,80,maxY/2+20,1);
+ LCD.drawLine(80,maxY/2+10,55,maxY/2,1);
+ LCD.drawLine(80,maxY/2+20,60,maxY/2+30,1);
+ delay(300);
+}  
+
+if(out1!=out2 && c>=2)
 for (int thisNote = 0; thisNote < 4; thisNote++) {
     int noteDuration = 1000/noteDurations[thisNote];
     tone(8, melody[thisNote],noteDuration);
@@ -120,10 +247,18 @@ for (int thisNote = 0; thisNote < 4; thisNote++) {
     delay(pauseBetweenNotes);
     noTone(8);
   } 
-  k=0;
-  if(k==1)
-  digitalWrite(5,LOW);
-  else
-  digitalWrite(5,HIGH);
+  
+if(digitalRead(2) != out1 && digitalRead(4) !=out2){
+  e++;
+}
+else{
+  e = 0;
+}
+  
+ LCD.clearScreen();
+  tout1=out1;
+  tout2=out2;
+  delay(200);
+}
   delay(1000);
 }
