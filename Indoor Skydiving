@@ -1,0 +1,24 @@
+Indoor Skydivin Robotizat
+-Serbanescu Adrian – Mihai-
+Introducere
+Deși tunelurile aerodinamice verticale au fost construite pentru cercetare aerodinamică, cele mai multe sunt folosite in scopuri de recreere, adesea promovate ca "indoor skydiving " sau bodyflight , care au devenit, de asemenea, un instrument popular de formare pentru parasutisti .
+Un astfel de dispozitiv ofera oamenilor posibilitatea de a experimenta senzația de zbor, fara avioane sau parașute, prin forța curentilor de vânt generati vertical. Aerul se mișcă în sus cu aproximativ 195 kilometri pe oră (120 mph sau de 55 m / s ). Un tunel de vânt vertical este frecvent numit "Indoor Skydiving" datorită popularității tunelurile aerodinamice verticale printre parasutisti, care raportează că senzația este extrem de similara cu parasutismul.  
+1.Utilitate practica
+Proiectul pe care l-am creat este o versiune in miniatura a unui Indoor Skyidiving, la care am adaugat mai multe elemente ce tin de electronica, care îmbinate cu programarea asigura siguranta începatorilor care practica acest sport. Astfel, problema pe care proiectul o rezolva este de a elminia instructorul, locul acestuia fiind luat de electronica, inclusiv de un LCD pe care sunt afisate indicatii despre miscarile pe care incepatorul trebuie sa le faca pentru a nu se lovi de peretii camerei .
+Instructorul ia intr-o oarecare masura din libertatea de miscare pe care o are practicantul si de asemenea, acesta primeste o cota parte din banii pe care îi incaseaza compania care pune la dispozitie centrul de indoor skydiving.
+2.Mecanica
+Robotul dispune de un motor cu o elice, cu rolul de a impinge aerul in sus, fara a exista alte componente puse in miscare.
+Arduino Uno (pe care sunt conectati toti senzorii, difuzorul si LCD-ul) este alimentat la o priza de 12V, iar motorul este alimentat de un acumulator de 4,2V.
+3.Electronica
+Motorul este programat in functie de datele furnizate de senzori prin intermediul unui tranzistor. Am ales folosirea unui tranzistor, deoarece proiectul reprezinta doar o idee in ceea ce priveste felul in care ar trebui sa arate la o scara mai mare un indoor skydiving robotizat. Astfel, in locul acumulatorului de 4,2V, vom putea avea orice sursa de curent.
+Robotul dispune de :
+	un senzor de miscare (3,3V si GND) : fiind amplasat aproape de tavanul incaperii ce are ventilatorul mare la baza, are rolul de a proteja începatorul prin a opri motorul in momentul in care acesta ajunge in dreptul senzorului, prevenind posibila izbire a acestuia cu tavanul; senzorul returneaza 0 in momentul in care nu detecteaza nicio miscare, trimitand un impuls de 4,7 V  printr-un pin digital de pe Arduino Uno care ajunge pe unul din pinii tranzistorului, închizand întrerupatorul din intreriorul acestuia
+si 1 in momentul in care detecteaza miscare, moment in care acel impuls nu mai este trimis, iar motorul se opreste.
+( proiectul are si un intrerupator care permite controlul senzorului de miscare);
+	un senzor de directie (3,3V si GND)  : care, amplasat pe costumul special pe care il poarta cel care se afla înauntru, are rolul de a opri motorul dupa 2 secunde daca pozitia indicata de acesta este aceeasi (pozitia este verificata odata la 0,5 sec si il opreste doar daca pozitia care se repeta este stanga sau dreapta); de asemenea, in functie de pozitia indicata, pe LCD apar indicatii pentru cel care se afla înauntru care sa-l ajute sa planeze cat mai bine, precum si semnal sonor cu 0,5 sec inainte de a se opri motorul;  senzorul indica pozitia returnand valori prin doua input-uri conectate la doi pini digitali de pe Arduino (1-1 – înclinat înainte;  0-0 înclinat înapoi; 1- 0 - înclinat spre stanga; 0-1 - înclinat spre dreapta);
+	difuzor (output digital si GND) : folosit cu scopul mentionat mai sus ;
+	LCD (5V, output digital si GND) .
+4.Software
+Ca software, robotul este programat cu ajutorul functiilor de baza din arduino si o biblioteca creata de producatorul LCD-ului ce contine functii specifice cu care se pot desena diferite forme ( linii, dreptunghiuri/patrate, cercuri ) si afisa text sau numere.
+Arduino are doua functii care sunt necesare pentru a incarca programul pe placa: functiile “setup” si “loop”, ambele fiind de tip void. Tot ceea ce se afla in afara acestor doua functii si in functia setup se efectueaza o singura data,  iar functia loop se efectueaza la infinit, in functie de intervalul de timp stabilit.
+In cazul proiectului de fata, odata incarcat programul pe placa Arduino Uno, acesta ruleaza in functie de datele primite de la senzori, doar senzorul de miscare putand fi activat si dezactivat de intrerupator.
